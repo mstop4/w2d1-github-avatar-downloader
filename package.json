@@ -4,7 +4,7 @@
   "description": "## Problem Statement",
   "main": "index.js",
   "scripts": {
-    "start": "node download_avatars.js",
+    "start": "node download_avatars.js jquery jquery",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -12,7 +12,7 @@
     "url": "git+https://github.com/mstop4/w2d1-github-avatar-downloader.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Jonathan Lam",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/mstop4/w2d1-github-avatar-downloader/issues"
