@@ -4,6 +4,9 @@
  *                     *
  *---------------------*/
 
+// Variables
+// ---------------------
+
 // Init packages
 var request = require("request");
 var fs = require("fs");
@@ -17,6 +20,10 @@ var repoName = process.argv[3];
 // Local info
 var avatarDir = "./avatars"
 
+
+// Functions
+// ---------------------
+
 // Displays a download confirmation
 function dlComplete(filePath) {
   console.log("Avatar downloaded to: " + filePath);
@@ -29,7 +36,7 @@ function createDir(dir) {
   }
 }
 
-// Downloads inamge from url to filePath on local machine
+// Downloads an image from url to filePath on local machine
 function downloadImageByURL(url, filePath) {
 
   request.get(url)
@@ -38,21 +45,19 @@ function downloadImageByURL(url, filePath) {
             throw err;
          })
          .on("response", function (response) {
-            //console.log("Response Status Code: ", response.statusCode);
-            //console.log("Content Type: ", response.headers["content-type"]);
             console.log("Downloading avatar from " + url + " ...");
          })
          .pipe(fs.createWriteStream(filePath)
-                 .on("finish", function () { dlComplete(filePath) }));    // show message when download is complete
+                 // Show message when download is complete
+                 .on("finish", function () { dlComplete(filePath) }));
 }
 
-// parses contributor list for relavant information (avatar URL, login name)
+// Parses contributor list for relavant information (avatar URL, login name), then downloads avatars
 function parseContributors(contributorList) {
 
   //Parse string -> JSON
   var contrib_JSON = JSON.parse(contributorList);
 
-  // Start downloading contributors' avatars
   for (var i = 0; i < contrib_JSON.length; i++ ) {
     downloadImageByURL(contrib_JSON[i]["avatar_url"] ,avatarDir + "/" + contrib_JSON[i]["login"] + ".png");
   }
@@ -61,7 +66,6 @@ function parseContributors(contributorList) {
 // Get the avatars of all contributors for a repo
 function getRepoContributors(repoOwner, repoName, cb) {
 
-  // request options for Github
   var options = {
     url: "https://" + GITHUB_USER + ":" + GITHUB_TOKEN + "@api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
     headers: {
@@ -69,27 +73,32 @@ function getRepoContributors(repoOwner, repoName, cb) {
     }
   };
 
-  console.log("Fetching from: " + options.url + "...");
-
-  // begin request
+  // Begin request
+  console.log("Fetching from: " + options.url + " ...\n");
   request(options, function (error, response, body) {
 
-    // Check for errors
-    console.log("Status Code: " + response.statusCode);
     if (error !== null && response.statusCode !== 200) {
       console.log("Error! Can't fetch data!");
       return;
-    }
-
-    // Process body
-    else {
+    } else {
+      console.log("Processing contributors...\n")
       cb.apply(this,[body]);
     }
   });
 }
 
-// Start
-console.log("Welcome to the GitHub Avatar Downloader!");
+// Start here
+// ------------------
 
+console.log("\nWelcome to the GitHub Avatar Downloader!\n");
+
+// Check for valid arguments, quit if arguments are not valid
+if (!repoOwner || !repoName) {
+  console.log("Error! Invalid arguments.");
+  console.log("Usage: node download_avatars.js repoOwner repoName");
+  return;
+}
+
+// Create directory if necessary, then download avatars
 createDir(avatarDir);
 getRepoContributors(repoOwner, repoName, parseContributors);
