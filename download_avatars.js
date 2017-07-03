@@ -11,8 +11,8 @@ var fs = require("fs");
 // GitHub info
 var GITHUB_USER = "mstop4";
 var GITHUB_TOKEN = "ae8066a4e51b2e538d0b9f636b46f1b60f3f5b1e";
-var repoOwner = "jquery";
-var repoName = "jquery";
+var repoOwner = process.argv[2];
+var repoName = process.argv[3];
 
 // Local info
 var avatarDir = "./avatars"
