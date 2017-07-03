@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/mstop4/w2d1-github-avatar-downloader#readme",
   "dependencies": {
+    "dotenv": "^4.0.0",
     "request": "^2.81.0"
   }
 }
