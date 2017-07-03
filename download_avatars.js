@@ -13,6 +13,18 @@ var GITHUB_TOKEN = "ae8066a4e51b2e538d0b9f636b46f1b60f3f5b1e";
 var repoOwner = "mstop4";
 var repoName = "FMODGMS";
 
+function parseContributors(contributorList) {
+
+  //Parse string -> JSON
+  contrib_JSON = JSON.parse(contributorList);
+
+  for (var i = 0; i < contrib_JSON.length; i++ ) {
+    console.log(contrib_JSON[i]["avatar_url"]);
+  }
+}
+
+
+// Start
 console.log("Welcome to the GitHub Avatar Downloader!");
 
 function getRepoContributors(repoOwner, repoName, cb) {
@@ -35,15 +47,10 @@ function getRepoContributors(repoOwner, repoName, cb) {
       throw error;
     }
 
-
     else {
-      console.log(body);
+      cb.apply(this,[body]);
     }
-
   });
 }
 
-getRepoContributors(repoOwner, repoName, function(err, result) {
-  console.log("Errors: ", err);
-  console.log("Result: ", result);
-})
+getRepoContributors(repoOwner, repoName, parseContributors);
