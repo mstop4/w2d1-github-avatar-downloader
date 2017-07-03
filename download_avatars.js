@@ -11,21 +11,25 @@ var fs = require("fs");
 // GitHub info
 var GITHUB_USER = "mstop4";
 var GITHUB_TOKEN = "ae8066a4e51b2e538d0b9f636b46f1b60f3f5b1e";
-var repoOwner = "mstop4";
-var repoName = "FMODGMS";
+var repoOwner = "jquery";
+var repoName = "jquery";
 
+// Local info
 var avatarDir = "./avatars"
 
-function dlComplete(message) {
-  console.log("Avatar downloaded to: " + message);
+// Displays a download confirmation
+function dlComplete(filePath) {
+  console.log("Avatar downloaded to: " + filePath);
 }
 
+// Creates a directory if it doesn't already exist
 function createDir(dir) {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
   }
 }
 
+// Downloads inamge from url to filePath on local machine
 function downloadImageByURL(url, filePath) {
 
   request.get(url)
@@ -42,18 +46,22 @@ function downloadImageByURL(url, filePath) {
                  .on("finish", function () { dlComplete(filePath) }));    // show message when download is complete
 }
 
+// parses contributor list for relavant information (avatar URL, login name)
 function parseContributors(contributorList) {
 
   //Parse string -> JSON
   var contrib_JSON = JSON.parse(contributorList);
 
+  // Start downloading contributors' avatars
   for (var i = 0; i < contrib_JSON.length; i++ ) {
-    //console.log(contrib_JSON[i]['login']);
     downloadImageByURL(contrib_JSON[i]["avatar_url"] ,avatarDir + "/" + contrib_JSON[i]["login"] + ".png");
   }
 }
 
+// Get the avatars of all contributors for a repo
 function getRepoContributors(repoOwner, repoName, cb) {
+
+  // request options for Github
   var options = {
     url: "https://" + GITHUB_USER + ":" + GITHUB_TOKEN + "@api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
     headers: {
@@ -70,9 +78,10 @@ function getRepoContributors(repoOwner, repoName, cb) {
     console.log("Status Code: " + response.statusCode);
     if (error !== null && response.statusCode !== 200) {
       console.log("Error! Can't fetch data!");
-      throw error;
+      return;
     }
 
+    // Process body
     else {
       cb.apply(this,[body]);
     }
